@@ -30,7 +30,7 @@ $user = get_uid();
 
 $ma = new mitarbeiter();
 $ma->load($user);
-//$ma->load('relgner');
+
 $meldung = '';
 if (isset($_REQUEST['nummer']) && $ma->telefonklappe){
 	$nummer = $_REQUEST["nummer"];
