@@ -136,14 +136,12 @@ function writeCallMenu()
 			var menuentry = document.createElement("menu");
 			menuentry.setAttribute("id","addons-asterisk-anrufmenu");
 			menuentry.setAttribute("label","Anruf");
-			//menuentry.addEventListener("command",AsteriskAnrufIntern, true);
 			anrufmenue.appendChild(menuentry);
 			
 			anrufmenue = document.getElementById("student-tree-popup");
 			var menuentry = document.createElement("menu");
 			menuentry.setAttribute("id","addons-asterisk-anrufmenu-stud");
 			menuentry.setAttribute("label","Anruf");
-			//menuentry.addEventListener("command",AsteriskAnrufIntern, true);
 			anrufmenue.appendChild(menuentry);
 }
 
