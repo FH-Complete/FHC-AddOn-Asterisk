@@ -57,6 +57,8 @@ if (isset($_REQUEST['nummer']) && $ma->telefonklappe){
 	$conn = null;
 	$meldung = 'Nummer '.$nummer." wird angerufen!";
 	unlink('/tmp/'.$filename);
+	if (!isset($_REQUEST["debug"]))
+		die();
 }
 
 
@@ -66,6 +68,7 @@ if (isset($_REQUEST['nummer']) && $ma->telefonklappe){
 <body>
 <form name="numform" action="asterisk_anruf.php" method="POST">
 <input type="text" name="nummer"><input type="submit" name="submit" value="Anruf">
+<input type="hidden" name="debug" value="1">
 </form>
 <?php
 	echo $meldung;
