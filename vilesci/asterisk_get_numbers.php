@@ -50,20 +50,24 @@ if (isset($_REQUEST["uid"]) && isset($_REQUEST["person_id"]))
 			if ($sk->kontakttyp == 'telefon' && $sk->kontakt != ASTERISK_KOPFNUMMER_INTERN)
 				$klappe_intern = $sk->kontakt.$ma->telefonklappe;
 		}
-		$nummern[] = $klappe_intern;
+		$nummern[] = array('typ' => 'Intern', 'nummer' => $klappe_intern);
 	}
 
 	$kontakt = new kontakt();
 	$typen = unserialize(ASTERISK_KONTAKT_TYPEN);
-	foreach ($typen as $typ){
+	foreach ($typen as $typ)
+	{
 		$kontakt->load_persKontakttyp($person_id, $typ);
 	}
+	$kontakttypen = new kontakt();
+	$kontakttypen->getKontakttyp();
+	$kontakttypen_arr = array();
+	foreach ($kontakttypen->result AS $kontakttyp)
+		$kontakttypen_arr[$kontakttyp->kontakttyp] = $kontakttyp->beschreibung;
 
 	foreach ($kontakt->result as $k)
 	{
-		//$num = preg_replace("/[^0-9]/", "", $k->kontakt);
-		$num = $k->kontakt;
-		$nummern[] = $num;
+		$nummern[] = array('typ' => $kontakttypen_arr[$k->kontakttyp], 'nummer' => $k->kontakt);
 	}
 
 	$jsonstring = json_encode($nummern);
@@ -78,15 +82,19 @@ elseif (isset($_REQUEST["person_id"]))
 	$nummern = array();
 	$kontakt = new kontakt();
 	$typen = unserialize(ASTERISK_KONTAKT_TYPEN);
-	foreach ($typen as $typ){
+	foreach ($typen as $typ)
+	{
 		$kontakt->load_persKontakttyp($person_id, $typ);
 	}
-
+	$kontakttypen = new kontakt();
+	$kontakttypen->getKontakttyp();
+	$kontakttypen_arr = array();
+	foreach ($kontakttypen->result AS $kontakttyp)
+		$kontakttypen_arr[$kontakttyp->kontakttyp] = $kontakttyp->beschreibung;
+	
 	foreach ($kontakt->result as $k)
 	{
-		//$num = preg_replace("/[^0-9]/", "", $k->kontakt);
-		$num = $k->kontakt;
-		$nummern[] = $num;
+		$nummern[] = array('typ' => $kontakttypen_arr[$k->kontakttyp], 'nummer' => $k->kontakt);
 	}
 
 	$jsonstring = json_encode($nummern);

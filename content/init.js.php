@@ -53,7 +53,7 @@ addon.push(
 		{		
 			var anrufmenue = document.getElementById("addons-asterisk-anrufmenu");
 			while (anrufmenue.firstChild) {
-	    		anrufmenue.removeChild(anrufmenue.firstChild);
+				anrufmenue.removeChild(anrufmenue.firstChild);
 			}
 			
 			var menuentry = document.createElement("menupopup");
@@ -63,15 +63,13 @@ addon.push(
 			$.ajax({dataType: "json", url: "../addons/asterisk/vilesci/asterisk_get_numbers.php?uid="+mitarbeiter_uid+"&person_id="+person_id,
 			success: function(data)
 				{
-					
-					for (var i=0; i<data.length; i++)
-					{		
-								
-						var tel = data[i];		
+					for (var i = 0; i < data.length; i++)
+					{
+						var tel = data[i].nummer;		
 						var anrufmenue = document.getElementById("addons-asterisk-menupopup");
 						var menuentry = document.createElement("menuitem");
 						menuentry.setAttribute("id","addons-asterisk-anruf-"+data[i]);
-						menuentry.setAttribute("label",data[i]);
+						menuentry.setAttribute("label",data[i].typ+' '+data[i].nummer);
 						menuentry.setAttribute("tel",tel);
 						menuentry.addEventListener("command",AsteriskAnruf, true);
 							
@@ -88,8 +86,9 @@ addon.push(
 		if (show_call_menu ==1)
 		{		
 			var anrufmenue = document.getElementById("addons-asterisk-anrufmenu-stud");
-			while (anrufmenue.firstChild) {
-	    		anrufmenue.removeChild(anrufmenue.firstChild);
+			while (anrufmenue.firstChild) 
+			{
+				anrufmenue.removeChild(anrufmenue.firstChild);
 			}
 			
 			var menuentry = document.createElement("menupopup");
@@ -99,14 +98,13 @@ addon.push(
 			$.ajax({dataType: "json", url: "../addons/asterisk/vilesci/asterisk_get_numbers.php?person_id="+person_id,
 			success: function(data)
 				{
-					
-					for (var i=0; i<data.length; i++)
+					for (var i = 0; i < data.length; i++)
 					{				
-						var tel = data[i];		
+						var tel = data[i].nummer;		
 						var anrufmenue = document.getElementById("addons-asterisk-menupopup-stud");
 						var menuentry = document.createElement("menuitem");
 						menuentry.setAttribute("id","addons-asterisk-anruf-"+data[i]);
-						menuentry.setAttribute("label",data[i]);
+						menuentry.setAttribute("label",data[i].typ+' '+data[i].nummer);
 						menuentry.setAttribute("tel",tel);
 						menuentry.addEventListener("command",AsteriskAnruf, true);
 							
