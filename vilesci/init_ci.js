@@ -27,7 +27,7 @@ function AsteriskAnrufInfoCenter(telNumber)
 {
 	// replace one or more '+' with exactly '00'
 	telNumber = telNumber.replace(/\++/,'00');
-	$.ajax({url:FHC_ADDON_DATA_STORAGE_OBJECT.app_root+"/addons/asterisk/vilesci/asterisk_anruf.php?nummer="+telNumber});
+	$.ajax({url:FHC_JS_DATA_STORAGE_OBJECT.app_root+"/addons/asterisk/vilesci/asterisk_anruf.php?nummer="+telNumber});
 }
 
 function InitiateCallButton()
