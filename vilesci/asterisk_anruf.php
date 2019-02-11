@@ -32,33 +32,61 @@ $ma = new mitarbeiter();
 $ma->load($user);
 
 $meldung = '';
-if (isset($_REQUEST['nummer']) && $ma->telefonklappe){
-	$nummer = $_REQUEST["nummer"];
-	$nummer = preg_replace('/[^0-9]/','',$nummer);
-        
-	// callfile bauen:
-	$sipselber = $ma->telefonklappe;
-	$callfile = "Channel: SIP/".$sipselber."\n";
-	$callfile .= "Callerid: ".$sipselber."\n";
-	//$callfile .= "MaxRetries: 2\n";
-	//$callfile .= "RetryTime: 60\n";
-	$callfile .= "WaitTime: 30\n";
-	$callfile .= "Context: test\n";
-	$callfile .= "Extension:".$nummer."\n";
-	//echo $callfile;
-	$filename='callfile_'.$sipselber.'.call';
-	$handle = fopen('/tmp/'.$filename,'w');
-	fwrite($handle, $callfile);
-	fclose($handle);
+$authenticated = FALSE;
 
+if (defined('ASTERISK_SSH_KEY') && defined('ASTERISK_SSH_PUBKEY') && ASTERISK_SSH_KEY && ASTERISK_SSH_PUBKEY)
+{
+	$conn = ssh2_connect(ASTERISK_SERVER_IP, ASTERISK_SERVER_PORT, array('hostkey'=>'ssh-rsa'));
+	if (ssh2_auth_pubkey_file($conn, ASTERSIK_SSH_USER, ASTERISK_SSH_PUBKEY, ASTERISK_SSH_KEY))
+	{
+		$meldung .= 'Authenticated with Public Key<br>';
+		$authenticated = TRUE;
+	}
+}
+else {
 	$conn = ssh2_connect(ASTERISK_SERVER_IP, ASTERISK_SERVER_PORT);
-	ssh2_auth_password($conn, ASTERSIK_SSH_USER, ASTERSIK_SSH_PWD);
-	ssh2_scp_send($conn, '/tmp/'.$filename, '/var/spool/asterisk/outgoing/'.$filename);
-	$conn = null;
-	$meldung = 'Nummer '.$nummer." wird angerufen!";
-	unlink('/tmp/'.$filename);
-	if (!isset($_REQUEST["debug"]))
-		die();
+	if (ssh2_auth_password($conn, ASTERSIK_SSH_USER, ASTERSIK_SSH_PWD))
+	{
+		$meldung .= 'Authenticated with Password';
+		$authenticated = TRUE;
+	}
+}
+
+if ($authenticated)
+{
+	if (isset($_REQUEST['nummer']) && $ma->telefonklappe){
+		$nummer = $_REQUEST["nummer"];
+		$nummer = preg_replace('/[^0-9]/','',$nummer);
+		$kopfnummer = preg_replace('/[ ]/','',ASTERISK_KOPFNUMMER_INTERN);
+		if (strlen($nummer)<=4)
+			$nummer = $kopfnummer.$nummer;
+		// callfile bauen:
+		$sipselber = $ma->telefonklappe;
+		$callfile = "Channel: Local/".$kopfnummer.$sipselber."@call-in\n";
+		$callfile .= "Callerid: ".$kopfnummer.$sipselber."\n";
+		//$callfile .= "MaxRetries: 2\n";
+		//$callfile .= "RetryTime: 60\n";
+		$callfile .= "WaitTime: 30\n";
+		$callfile .= "Context: soft-calls\n";
+		$callfile .= "Extension:".$nummer."\n";
+		//echo $callfile;
+
+
+		$filename='callfile_'.$sipselber.'.call';
+		$handle = fopen('/tmp/'.$filename,'w');
+		fwrite($handle, $callfile);
+		fclose($handle);
+
+		ssh2_scp_send($conn, '/tmp/'.$filename, '/var/spool/asterisk/outgoing/'.$filename);
+		$conn = null;
+		$meldung = 'Nummer '.$nummer." wird angerufen!";
+		unlink('/tmp/'.$filename);
+		if (!isset($_REQUEST["debug"]))
+			die();
+	}
+}
+else {
+	$meldung .= 'Connetion to Asterisk Server could not be established';
 }
 
 

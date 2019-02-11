@@ -26,9 +26,9 @@
 
 var show_call_menu = 0;
 
-addon.push( 
+addon.push(
 {
-	init: function() 
+	init: function()
 	{
 		// Diese Funktion wird nach dem Laden des FAS aufgerufen
 
@@ -36,83 +36,83 @@ addon.push(
 		success: function(data)
 		{
 		if (data == 1)
-			{				
+			{
 				show_call_menu = 1;
 				writeCallMenu();
 			}
-			
+
 		}
 		});
-		
+
 
 	},
 	selectMitarbeiter: function(person_id, mitarbeiter_uid)
 	{
-		
+
 		if (show_call_menu ==1)
-		{		
+		{
 			var anrufmenue = document.getElementById("addons-asterisk-anrufmenu");
 			while (anrufmenue.firstChild) {
 				anrufmenue.removeChild(anrufmenue.firstChild);
 			}
-			
+
 			var menuentry = document.createElement("menupopup");
 			menuentry.setAttribute("id","addons-asterisk-menupopup");
 			anrufmenue.appendChild(menuentry);
-		
+
 			$.ajax({dataType: "json", url: "../addons/asterisk/vilesci/asterisk_get_numbers.php?uid="+mitarbeiter_uid+"&person_id="+person_id,
 			success: function(data)
 				{
 					for (var i = 0; i < data.length; i++)
 					{
-						var tel = data[i].nummer;		
+						var tel = data[i].nummer;
 						var anrufmenue = document.getElementById("addons-asterisk-menupopup");
 						var menuentry = document.createElement("menuitem");
 						menuentry.setAttribute("id","addons-asterisk-anruf-"+data[i]);
 						menuentry.setAttribute("label",data[i].typ+' '+data[i].nummer);
 						menuentry.setAttribute("tel",tel);
 						menuentry.addEventListener("command",AsteriskAnruf, true);
-							
+
 						anrufmenue.appendChild(menuentry);
 					}
 				}
 			}
-			);	
+			);
 		}
-		
+
 	},
 	selectStudent: function(person_id, prestudent_id, student_uid)
 	{
 		if (show_call_menu ==1)
-		{		
+		{
 			var anrufmenue = document.getElementById("addons-asterisk-anrufmenu-stud");
-			while (anrufmenue.firstChild) 
+			while (anrufmenue.firstChild)
 			{
 				anrufmenue.removeChild(anrufmenue.firstChild);
 			}
-			
+
 			var menuentry = document.createElement("menupopup");
 			menuentry.setAttribute("id","addons-asterisk-menupopup-stud");
 			anrufmenue.appendChild(menuentry);
-		
+
 			$.ajax({dataType: "json", url: "../addons/asterisk/vilesci/asterisk_get_numbers.php?person_id="+person_id,
 			success: function(data)
 				{
 					for (var i = 0; i < data.length; i++)
-					{				
-						var tel = data[i].nummer;		
+					{
+						var tel = data[i].nummer;
 						var anrufmenue = document.getElementById("addons-asterisk-menupopup-stud");
 						var menuentry = document.createElement("menuitem");
 						menuentry.setAttribute("id","addons-asterisk-anruf-"+data[i]);
 						menuentry.setAttribute("label",data[i].typ+' '+data[i].nummer);
 						menuentry.setAttribute("tel",tel);
 						menuentry.addEventListener("command",AsteriskAnruf, true);
-							
+
 						anrufmenue.appendChild(menuentry);
 					}
 				}
 			}
-			);	
+			);
 		}
 
 
@@ -135,7 +135,7 @@ function writeCallMenu()
 			menuentry.setAttribute("id","addons-asterisk-anrufmenu");
 			menuentry.setAttribute("label","Anruf");
 			anrufmenue.appendChild(menuentry);
-			
+
 			anrufmenue = document.getElementById("student-tree-popup");
 			var menuentry = document.createElement("menu");
 			menuentry.setAttribute("id","addons-asterisk-anrufmenu-stud");
@@ -146,8 +146,6 @@ function writeCallMenu()
 function AsteriskAnruf(event)
 {
 	tel=event.target.getAttribute('tel');
+	tel = tel.replace(/\++/,'00');
 	$.ajax({url:"../addons/asterisk/vilesci/asterisk_anruf.php?nummer="+tel});
 }
-
-
-
