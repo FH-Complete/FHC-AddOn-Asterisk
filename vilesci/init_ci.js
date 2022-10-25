@@ -41,7 +41,7 @@ function InitiateCallButton()
 		{
 			var buttonElem = buttons[i];
 			var telNum = buttonElem.innerHTML;
-			buttonElem.innerHTML = telNum+'<input type="button" class="btn btn-default" value="Anruf" onclick="AsteriskAnrufInfoCenter(\''+telNum+'\')">';
+			buttonElem.innerHTML = telNum+'<input type="button" class="btn btn-default" value="Anruf" onclick="AsteriskAnrufInfoCenter(\''+buttons[i].dataset.value+'\')">';
 		}
 	}
 }
