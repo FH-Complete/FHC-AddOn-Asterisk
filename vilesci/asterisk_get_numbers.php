@@ -120,7 +120,7 @@ else
 	}
 	$test_user = unserialize(ASTERISK_TEST_MODE);
 
-	if ($ma->telefonklappe && $standort == 'intern' && (in_array($ma->telefonklappe, $test_user) || count($test_user) == 0))
+	if ($ma->telefonklappe && $standort == 'intern' && (in_array($ma->telefonklappe, $test_user) || numberOfElements($test_user) == 0))
 		echo json_encode(1);
 	else
 		echo json_encode(0);
